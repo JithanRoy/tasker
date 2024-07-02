@@ -1,7 +1,9 @@
 // eslint-disable-next-line react/prop-types
+import PropTypes from 'prop-types';
+
 import { FaStar } from "react-icons/fa";
 
-export const TaskList = ({ tasks }) => {
+export const TaskList = ({ tasks, onEdit, onDelete, onFav }) => {
   return (
     <div className="overflow-auto">
       <table className="table-fixed overflow-auto xl:w-full">
@@ -37,11 +39,14 @@ export const TaskList = ({ tasks }) => {
               className="border-b border-[#2E3443] [&>td]:align-baseline [&>td]:px-4 [&>td]:py-2"
             >
               <td>
-                {task.isFavorite ? (
-                  <FaStar color="yellow" />
-                ) : (
-                  <FaStar color="gray" />
-                )}
+              <button onClick={()=> onFav(task.id)}>
+                  {task.isFavorite ? (
+                    <FaStar color="yellow" />
+                  ) : (
+                    <FaStar color="gray" />
+                  )}
+              </button>
+
               </td>
               <td>{task.title}</td>
               <td>
@@ -62,8 +67,8 @@ export const TaskList = ({ tasks }) => {
               <td className="text-center">{task.priority}</td>
               <td>
                 <div className="flex items-center justify-center space-x-3">
-                  <button className="text-red-500">Delete</button>
-                  <button className="text-blue-500">Edit</button>
+                  <button className="text-red-500" onClick={()=> onDelete(task.id)}>Delete</button>
+                  <button className="text-blue-500" onClick={()=> onEdit(task)}>Edit</button>
                 </div>
               </td>
             </tr>
@@ -72,4 +77,20 @@ export const TaskList = ({ tasks }) => {
       </table>
     </div>
   );
+};
+
+TaskList.propTypes = {
+  tasks: PropTypes.arrayOf(
+    PropTypes.shape({
+      id: PropTypes.oneOfType([PropTypes.string, PropTypes.number]).isRequired,
+      title: PropTypes.string.isRequired,
+      description: PropTypes.string.isRequired,
+      tags: PropTypes.arrayOf(PropTypes.string).isRequired,
+      priority: PropTypes.string.isRequired,
+      isFavorite: PropTypes.bool.isRequired,
+    })
+  ).isRequired,
+  onEdit: PropTypes.func.isRequired,
+  onDelete: PropTypes.func.isRequired,
+  onFav: PropTypes.func.isRequired,
 };
