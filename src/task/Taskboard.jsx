@@ -3,6 +3,7 @@ import SearchTask from "./SearchTask";
 import { TaskAction } from "./TaskAction";
 import { TaskList } from "./TaskList";
 import AddTask from "./AddTask";
+import NoTaskFound from './NoTaskFound';
 
 export default function Taskboard() {
   const defaultTask = {
@@ -55,8 +56,8 @@ export default function Taskboard() {
   }
 
   const handleFavTask = (taskId) => {
-    TaskList(tasks.map((task) => {
-      if(task.id === taskId) {
+    setTasks(tasks.map((task) => {
+      if(task.id == taskId) {
         return {...task, isFavorite: !task.isFavorite};
       } else {
         return task;
@@ -64,15 +65,26 @@ export default function Taskboard() {
     }))
   }
 
+  const handleSearch = (searchTerm) => {
+    console.log("clicked");
+    const filtered = tasks.filter(task => task.title.toLowerCase.includes(searchTerm.toLowerCase()));
+    setTasks([...filtered]);
+  }
+
   return (
     <>
       <section className='mb-20'  id="tasks">
         {module && <AddTask onSave={onSaveData} taskToUpdate={taskToUpdate} onCloseModule={onHandleCloseModule} />}
         <div className="container">
-          <SearchTask />
+          <SearchTask onSearch={handleSearch} />
           <div className={`rounded-xl border border-[rgba(206,206,206,0.12)] bg-[#1D212B] px-6 py-8 md:px-9 md:py-16 transition-all duration-300 ${module ? "filter blur-md" : ""}` }>
             <TaskAction onDeleteAllTask={handleDeleteAllTask} showModule={setModule} />
-            <TaskList tasks={tasks} onEdit={handleTaskEdit} onDelete={onHandleDelete} onFav={handleFavTask} />
+            {tasks.length > 0 ? (
+              <TaskList tasks={tasks} onEdit={handleTaskEdit} onDelete={onHandleDelete} onFav={handleFavTask} />
+            ) : (
+              <NoTaskFound />
+            )}
+            
           </div>
         </div>
       </section>
